@@ -13,10 +13,12 @@ BASE_URL = os.getenv("OPENAI_BASE_URL")
 if not PROXYAPI_KEY or not BASE_URL:
     raise ValueError("Проверь переменные окружения PROXYAPI_KEY и OPENAI_BASE_URL")
 
+TEMPERATURE = 0.6  # креативность для метафор
+
 # --- Модель ---
 llm = ChatOpenAI(
     model_name="gpt-4o-mini",
-    temperature=0.1,  # креативность для метафор
+    temperature=TEMPERATURE,
     openai_api_key=PROXYAPI_KEY,
     openai_api_base=BASE_URL
 )
@@ -46,7 +48,6 @@ draft_prompt = PromptTemplate(
 )
 
 draft_chain = draft_prompt | llm
-
 
 # =========================
 # ШАГ 2 — Улучшение (Refinement)
@@ -78,7 +79,6 @@ refine_prompt = PromptTemplate(
 
 refine_chain = refine_prompt | llm
 
-
 # =========================
 # Основной цикл
 # =========================
@@ -102,6 +102,6 @@ while True:
         {"draft_output": draft_response.content}
     )
 
-    print("\nФинальный результат:\n")
+    print(f"\nФинальный результат для Temperature={TEMPERATURE}:\n")
     print(final_response.content)
-    print("\n" + "="*70 + "\n")
+    print("\n" + "=" * 70 + "\n")
